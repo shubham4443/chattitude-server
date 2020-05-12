@@ -10,8 +10,7 @@ const Chatroom = require('./models/chatrooms');
 const { v4: uuid } = require('uuid');
 require('dotenv').config();
 
-const uri = "mongodb+srv://shubham:12345@firstcluster-tejw5.mongodb.net/chattitude?retryWrites=true&w=majority";
-mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useCreateIndex: true });
 
 const app = express();
 const port = process.env.PORT || 8000;

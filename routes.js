@@ -15,6 +15,10 @@ app.get("/", (req, res) => {
   res.send("Whats up?");
 })
 
+app.get("/version", (req, res) => {
+  res.json({version: process.env.VERSION})
+})
+
 app.post("/chatroom/create", (req, res) => {
 
   const {user1, user2} = req.body;
