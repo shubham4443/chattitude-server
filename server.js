@@ -1,0 +1,66 @@
+const mongoose = require("mongoose");
+const express = require('express');
+const routes = require('./routes');
+const auth = require('./auth');
+const cors = require('cors');
+const socket = require('socket.io');
+const cookieParser = require('cookie-parser');
+const Chat = require('./models/chats');
+const Chatroom = require('./models/chatrooms');
+const { v4: uuid } = require('uuid');
+require('dotenv').config();
+
+const uri = "mongodb+srv://shubham:12345@firstcluster-tejw5.mongodb.net/chattitude?retryWrites=true&w=majority";
+mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true });
+
+const app = express();
+const server = app.listen("8000", () => console.log("Server listening...."));
+
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+app.use(cookieParser());
+app.use(express.json());
+app.use(routes);
+app.use(auth);
+
+// Socket setup & pass server
+let counter = 1;
+const io = socket(server);
+io.on('connection', (socket) => {
+  console.log(`made socket connection ${counter++}`, socket.id);
+
+  socket.on('room', (chatroom_id) => {
+    socket.join(chatroom_id);
+  })
+  
+  socket.on("send", (data) => {
+
+    const chat_id = uuid();
+
+    const docs = {
+      chat_id, 
+      chatroom_id: data.chatroom_id,
+      userFrom: data.userFrom,
+      userTo: data.userTo,
+      text: data.text,
+      date: new Date()
+    }
+
+    const chat = Chat({
+      ...docs
+    })
+
+    chat.save();
+    Chatroom.findOne({chatroom_id: data.chatroom_id}, (err, doc) => {
+      doc.last_text = data.text;
+      doc.date = new Date();
+      if(data.userFrom === doc.user1) {
+        doc.user2unread = doc.user2unread + 1;
+      } else {
+        doc.user1unread = doc.user1unread + 1;
+      }
+      doc.save();
+    })
+
+    io.to(data.chatroom_id).emit('message', docs);
+  })
+})
