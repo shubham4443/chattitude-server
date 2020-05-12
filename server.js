@@ -14,7 +14,8 @@ const uri = "mongodb+srv://shubham:12345@firstcluster-tejw5.mongodb.net/chattitu
 mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true });
 
 const app = express();
-const server = app.listen("8000", () => console.log("Server listening...."));
+const port = process.env.PORT || 8000;
+const server = app.listen(port, () => console.log(`Server listening at PORT ${port} .....`));
 
 app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(cookieParser());
