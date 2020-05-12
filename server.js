@@ -16,7 +16,17 @@ const app = express();
 const port = process.env.PORT || 8000;
 const server = app.listen(port, () => console.log(`Server listening at PORT ${port} .....`));
 
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+const whitelist = ["https://shubham-nazare-chattitude.netlify.app", 'http://localhost:3000'];
+app.use(cors({
+  credentials: true, 
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}));
 app.use(cookieParser());
 app.use(express.json());
 app.use(routes);
@@ -31,13 +41,13 @@ io.on('connection', (socket) => {
   socket.on('room', (chatroom_id) => {
     socket.join(chatroom_id);
   })
-  
+
   socket.on("send", (data) => {
 
     const chat_id = uuid();
 
     const docs = {
-      chat_id, 
+      chat_id,
       chatroom_id: data.chatroom_id,
       userFrom: data.userFrom,
       userTo: data.userTo,
@@ -50,10 +60,10 @@ io.on('connection', (socket) => {
     })
 
     chat.save();
-    Chatroom.findOne({chatroom_id: data.chatroom_id}, (err, doc) => {
+    Chatroom.findOne({ chatroom_id: data.chatroom_id }, (err, doc) => {
       doc.last_text = data.text;
       doc.date = new Date();
-      if(data.userFrom === doc.user1) {
+      if (data.userFrom === doc.user1) {
         doc.user2unread = doc.user2unread + 1;
       } else {
         doc.user1unread = doc.user1unread + 1;
