@@ -11,6 +11,10 @@ app.post("/users/suggested", async (req, res) => {
   res.json(docs.map(val => val.name).sort())
 })
 
+app.get("/", (req, res) => {
+  res.send("Whats up?");
+})
+
 app.post("/chatroom/create", (req, res) => {
 
   const {user1, user2} = req.body;
