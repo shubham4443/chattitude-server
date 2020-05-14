@@ -94,6 +94,7 @@ app.post("/chats/read", (req,res) => {
       doc.user2unread = 0;
     }
     doc.save();
+    res.sendStatus(200)
   })
 })
 
