@@ -50,7 +50,7 @@ app.post("/register", (req, res) => {
         user.save()
         const msg = {
           to: req.body.email,
-          from: 'markeloff4443@gmail.com',
+          from: 'smnazare_b19@el.vjti.ac.in',
           subject: 'Chattitude: Email Verification',
           text: `Click on this link to verify your email ${process.env.HOST_URL}/verification?token=${verificationToken}&name=${req.body.name}`,
         };
