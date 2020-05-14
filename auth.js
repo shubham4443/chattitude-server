@@ -9,6 +9,28 @@ require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API);
 
+const nodemailer = require("nodemailer");
+
+nodemailer.createTestAccount()
+.then((testAccount) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.etheral.email",
+    port: 587,
+    secure: false,
+    auth: {
+      user: testAccount.user,
+      pass: testAccount.pass
+    }
+  })
+  transporter.sendMail({
+    from: "markeloff4443@gmail.com",
+    to: "shubham4443@gmail.com",
+    subject: "HELLO WORLD!!!",
+    text: "tasasas"
+  })
+  .then((info) => console.log(info))
+})
+
 let refreshTokens = [];
 
 app.post("/refresh", (req, res) => {
