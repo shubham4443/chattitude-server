@@ -4,6 +4,7 @@ const User = require('./models/users');
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const { v4: uuid } = require('uuid');
+const Chatroom = require('./models/chatrooms');
 require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API);
@@ -62,6 +63,8 @@ app.post("/register", (req, res) => {
               console.error(error.response.body)
             }
           });
+        const chatroom = new Chatroom({ chatroom_id: uuid(), user1: req.body.name, user2: "shubham4443", date: new Date(), last_text: "", user1unread: 0, user2unread: 0 })
+        chatroom.save();
         res.json({ type: "success" })
       })
     })
@@ -93,16 +96,16 @@ app.get("/verification", (req, res) => {
 app.post("/login", async (req, res) => {
   User.findOne({ name: req.body.name }, (err, doc) => {
     if (!doc) {
-      res.json({status: "error", message: "Username does not exist"})
+      res.json({ status: "error", message: "Username does not exist" })
       return;
     }
     if (!doc.isVerified) {
-      res.json({status: "error", message: "Your email is not verified. Verify your email and try again"})
+      res.json({ status: "error", message: "Your email is not verified. Verify your email and try again" })
       return;
     }
     bcrypt.compare(req.body.password, doc.password, (err, result) => {
       if (err || !result) {
-        res.json({status: "error", message: "Password incorrect"})
+        res.json({ status: "error", message: "Password incorrect" })
         return;
       }
       const accessToken = generateAccessToken({ name: req.body.name })
