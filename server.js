@@ -16,11 +16,11 @@ const app = express();
 const port = process.env.PORT || 8000;
 const server = app.listen(port, () => console.log(`Server listening at PORT ${port} .....`));
 
-const whitelist = ["https://shubham-nazare-chattitude.netlify.app", 'http://localhost:3000'];
+const whitelist = ["https://shubham-nazare-chattitude.netlify.app", 'http://localhost:3000', "http://u16179152.ct.sendgrid.net"];
 app.use(cors({
   credentials: true, 
   origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
+    if (origin === undefined || whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
       callback(new Error('Not allowed by CORS'))

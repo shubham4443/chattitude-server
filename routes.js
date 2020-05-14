@@ -6,13 +6,13 @@ const User = require('./models/users');
 const { v4: uuid } = require('uuid');
 
 app.post("/users/suggested", async (req, res) => {
-  const docs = await User.find({ name: { $regex: req.body.searchTxt } });
-  
-  res.json(docs.map(val => val.name).sort())
-})
-
-app.get("/", (req, res) => {
-  res.send("Whats up?");
+  if(req.body.searchTxt !== "") {
+    const docs = await User.find({ name: { $regex: req.body.searchTxt } });
+    res.json(docs.map(val => val.name).sort())
+  }
+  else {
+    res.json(["shubham4443", "LightYagami", "walter_white", "Tony Soprano", "Lelouch", "Vito Corleone"])
+  }
 })
 
 app.get("/version", (req, res) => {
