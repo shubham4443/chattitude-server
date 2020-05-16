@@ -92,7 +92,7 @@ app.get("/verification", (req, res) => {
       doc.save();
 
       // Create first chatroom with shubham4443
-      const chatroom = new Chatroom({ chatroom_id: uuid(), user1: req.body.name, user2: "shubham4443", date: new Date(), last_text: "", user1unread: 0, user2unread: 0 })
+      const chatroom = new Chatroom({ chatroom_id: uuid(), user1: name, user2: "shubham4443", date: new Date(), last_text: "", user1unread: 0, user2unread: 0 })
       chatroom.save();
 
       res.send(`EMAIL VERIFIED. You can login now at https://shubham-nazare-chattitude.netlify.app/`)
