@@ -76,17 +76,19 @@ io.on('connection', (socket) => {
 
     // Push notification
     LoggedInUsers.findOne({ name: docs.userTo }, (err, doc) => {
-      const payload = JSON.stringify({
-        title: 'Chattitude',
-        body: `${docs.userFrom} says : ${docs.text}`,
-        icon: 'https://shubham-nazare-chattitude.netlify.app/logo192.png',
-        data: {
-          link: '/'
-        }
-      })
-      webpush.sendNotification(JSON.parse(doc.subscription), payload)
-        .then(result => console.log(result))
-        .catch(e => console.log(e.stack))
+      if(doc) {
+        const payload = JSON.stringify({
+          title: 'Chattitude',
+          body: `${docs.userFrom} says : ${docs.text}`,
+          icon: 'https://shubham-nazare-chattitude.netlify.app/logo192.png',
+          data: {
+            link: '/'
+          }
+        })
+        webpush.sendNotification(JSON.parse(doc.subscription), payload)
+          .then(result => console.log(result))
+          .catch(e => console.log(e.stack))
+      }
     })
 
     // Update chatroom
